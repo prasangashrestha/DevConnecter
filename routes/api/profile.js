@@ -29,7 +29,7 @@ router.get('/me', auth, async (req, res) => {
 //@route  POST api/profile/me
 //@desc  Create or update usre profile
 //@access Private
-router.post('/', [auth, [
+router.post('/me', [auth, [
         check('status', 'Status is required').not().isEmpty(),
         check('skills', 'Skills is required').not().isEmpty()
     ]],
@@ -97,6 +97,37 @@ router.post('/', [auth, [
         }
 
     })
+
+//@route  POST api/profile
+//@desc  Create or update user ID
+//@access Public
+router.get('/', async (req, res) => {
+    try {
+        const profiles = await Profile.find().populate('user', ['name', 'avatar']);
+        res.json(profiles)
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Server Error')
+    }
+})
+
+//@route  POST api/profile/user/:user_id
+//@desc  Create or update usre profile
+//@access Private
+router.get('/user/:user_id', async (req, res) => {
+    try {
+        const profile = await Profile.findOne({ user: req.params.user_id }).populate('user', ['name', 'avatar']);
+
+        if (!profile) return res.status(400).json({ msg: 'Profile Not Found' })
+        res.json(profile)
+    } catch (error) {
+        console.error(error);
+        if (error.kind == 'ObjectId') {
+            return res.status(400).json({ msg: 'Profile Not Found' })
+        }
+        res.status(500).send('Server Error')
+    }
+})
 
 
 module.exports = router
