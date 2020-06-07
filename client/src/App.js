@@ -1,17 +1,24 @@
 import React, { Fragment } from 'react';
-
 import './App.css';
 import Navbar from './components/layout/Navbar';
 import Landing from './components/layout/Landing';
 
+//Redux
+import { Provider } from 'react-redux';
+import store from './store';
+
 function App() {
   return (
-    <div className="App">
-      <Fragment>
-        <Navbar />
-        <Landing />
-      </Fragment>
-    </div>
+    <Provider store={store}>
+      <Router>
+        <Fragment>
+          <Navbar />
+          <Switch>
+            <Route exact path='/' component={Landing} />
+          </Switch>
+        </Fragment>
+      </Router>
+    </Provider>
   );
 }
 
